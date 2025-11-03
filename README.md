@@ -1,148 +1,102 @@
-# README
+# BoTokenizers
 
-> **Note:** This readme template is based on one from the [Good Docs Project](https://thegooddocsproject.dev). You can find it and a guide to filling it out [here](https://gitlab.com/tgdp/templates/-/tree/main/readme). (_Erase this note after filling out the readme._)
+A Python package for training and using BPE and SentencePiece tokenizers for Tibetan text, with support for uploading to and downloading from the Hugging Face Hub.
 
-<h1 align="center">
-  <br>
-  <a href="https://openpecha.org"><img src="https://avatars.githubusercontent.com/u/82142807?s=400&u=19e108a15566f3a1449bafb03b8dd706a72aebcd&v=4" alt="OpenPecha" width="150"></a>
-  <br>
-</h1>
+## Installation
 
-## _Project Name_
-_The project name should match its code's capability so that new users can easily understand what it does._
+To install the package, clone the repository and install the dependencies:
 
-## Owner(s)
+```bash
+git clone https://github.com/OpenPecha/BoTokenizers.git
+cd BoTokenizers
+pip install .
+```
 
-_Change to the owner(s) of the new repo. (This template's owners are:)_
-- [@ngawangtrinley](https://github.com/ngawangtrinley)
-- [@mikkokotila](https://github.com/mikkokotila)
-- [@evanyerburgh](https://github.com/evanyerburgh)
+For development, install with the `dev` dependencies:
 
+```bash
+pip install -e ".[dev]"
+```
 
-## Table of contents
-<p align="center">
-  <a href="#project-description">Project description</a> •
-  <a href="#who-this-project-is-for">Who this project is for</a> •
-  <a href="#project-dependencies">Project dependencies</a> •
-  <a href="#instructions-for-use">Instructions for use</a> •
-  <a href="#contributing-guidelines">Contributing guidelines</a> •
-  <a href="#additional-documentation">Additional documentation</a> •
-  <a href="#how-to-get-help">How to get help</a> •
-  <a href="#terms-of-use">Terms of use</a>
-</p>
-<hr>
+## Usage
 
-## Project description
-_Use one of these:_
+### Training a BPE Tokenizer
 
-With _Project Name_ you can _verb_ _noun_...
+You can train a Byte-level BPE tokenizer using the `tokenizers` library. This script also supports uploading the trained tokenizer to the Hugging Face Hub.
 
-_Project Name_ helps you _verb_ _noun_...
+**Usage:**
 
+To train a new BPE tokenizer, run the `train_bpe.py` script:
 
-## Who this project is for
-This project is intended for _target user_ who wants to _user objective_.
+```bash
+python src/BoTokenizers/train_bpe.py \
+    --corpus <path_to_your_corpus.txt> \
+    --output_dir <directory_to_save_tokenizer> \
+    --vocab_size <vocabulary_size> \
+    --push_to_hub \
+    --repo_id <your_hf_username/your_repo_name> \
+    --private # Optional: to make the repo private
+```
 
+### Training a SentencePiece Tokenizer
 
-## Project dependencies
-Before using _Project Name_, ensure you have:
-* python _version_
-* _Prerequisite 2_
-* _Prerequisite 3..._
+This project includes a script to train a SentencePiece BPE model on your own corpus. You can also upload the trained tokenizer to the Hugging Face Hub.
 
+**Usage:**
 
-## Instructions for use
-Get started with _Project Name_ by _(write the first step a user needs to start using the project. Use a verb to start.)_.
+To train a new tokenizer, run the `train_sentence_piece.py` script:
 
+```bash
+python src/BoTokenizers/train_sentence_piece.py \
+    --corpus_path <path_to_your_corpus.txt> \
+    --model_prefix <your_model_name> \
+    --vocab_size <vocabulary_size> \
+    --push_to_hub \
+    --repo_id <your_hf_username/your_repo_name> \
+    --private  # Optional: to make the repo private
+```
 
-### Install _Project Name_
-1. _Write the step here._ 
+### Tokenizing Text
 
-    _Explanatory text here_ 
-    
-    _(Optional: Include a code sample or screenshot that helps your users complete this step.)_
+You can use the `tokenize.py` script to tokenize text or files using the trained models from the Hugging Face Hub.
 
-2. _Write the step here._
- 
-    a. _Substep 1_ 
-    
-    b. _Substep 2_
+**Usage from Command Line:**
 
+```bash
+# Tokenize a string using the default BPE model
+python -m BoTokenizers.tokenize --tokenizer_type bpe --text "བཀྲ་ཤིས་བདེ་ལེགས།"
 
-### Configure _Project Name_
-1. _Write the step here._
-2. _Write the step here._
+# Tokenize a file using the default SentencePiece model
+python -m BoTokenizers.tokenize --tokenizer_type sentencepiece --file_path ./data/corpus.txt
+```
 
+**Programmatic Usage:**
 
-### Run _Project Name_
-1. _Write the step here._
-2. _Write the step here._
+```python
+from BoTokenizers.tokenize import BpeTokenizer, SentencePieceTokenizer
 
+# Initialize with default models from config
+bpe_tokenizer = BpeTokenizer()
+sp_tokenizer = SentencePieceTokenizer()
 
-### Troubleshoot _Project Name_
-1. _Write the step here._
-2. _Write the step here._
+text = "བཀྲ་ཤིས་བདེ་ལེགས།"
+bpe_tokens = bpe_tokenizer.tokenize(text)
+sp_tokens = sp_tokenizer.tokenize(text)
 
-<table>
-  <tr>
-   <td>
-    Issue
-   </td>
-   <td>
-    Solution
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-  <tr>
-   <td>
-    _Describe the issue here_
-   </td>
-   <td>
-    _Write solution here_
-   </td>
-  </tr>
-</table>
+print("BPE Tokens:", bpe_tokens)
+print("SentencePiece Tokens:", sp_tokens)
+```
 
+## Contributing
 
-Other troubleshooting supports:
-* _Link to FAQs_
-* _Link to runbooks_
-* _Link to other relevant support information_
-
-
-## Contributing guidelines
 If you'd like to help out, check out our [contributing guidelines](/CONTRIBUTING.md).
 
-
-## Additional documentation
-_Include links and brief descriptions to additional documentation._
-
-For more information:
-* [Reference link 1](#)
-* [Reference link 2](#)
-* [Reference link 3](#)
-
-
 ## How to get help
+
 * File an issue.
 * Email us at openpecha[at]gmail.com.
 * Join our [discord](https://discord.com/invite/7GFpPFSTeA).
 
+## License
 
-## Terms of use
-_Project Name_ is licensed under the [MIT License](/LICENSE.md).
+This project is licensed under the [MIT License](/LICENSE.md).
