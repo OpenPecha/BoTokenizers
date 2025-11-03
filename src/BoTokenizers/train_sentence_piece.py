@@ -12,20 +12,27 @@ def train_sentencepiece(corpus_path, model_prefix, vocab_size):
         corpus_path (str): Path to the training corpus.
         model_prefix (str): Prefix for the model and vocab files.
         vocab_size (int): The size of the vocabulary.
+    
+    Returns:
+        A tuple containing the path to the model and vocab files.
     """
     print("Training SentencePiece tokenizer...")
     spm.SentencePieceTrainer.train(
         f'--input={corpus_path} --model_prefix={model_prefix} '
         f'--vocab_size={vocab_size} --model_type=bpe'
     )
-    print(f"SentencePiece model saved as {model_prefix}.model and {model_prefix}.vocab")
+    model_file = f"{model_prefix}.model"
+    vocab_file = f"{model_prefix}.vocab"
+    print(f"SentencePiece model saved as {model_file} and {vocab_file}")
+    return model_file, vocab_file
 
-def upload_to_hf_hub(model_prefix, repo_id, private):
+def upload_to_hf_hub(model_file, vocab_file, repo_id, private):
     """
     Uploads the trained SentencePiece model to the Hugging Face Hub.
 
     Args:
-        model_prefix (str): Prefix of the model files.
+        model_file (str): Path to the model file.
+        vocab_file (str): Path to the vocab file.
         repo_id (str): The ID of the repository on the Hugging Face Hub.
         private (bool): Whether to create a private repository.
     """
@@ -41,9 +48,6 @@ def upload_to_hf_hub(model_prefix, repo_id, private):
         exist_ok=True,
     )
     
-    model_file = f"{model_prefix}.model"
-    vocab_file = f"{model_prefix}.vocab"
-
     # Upload the model and vocab files
     api.upload_file(
         path_or_fileobj=model_file,
@@ -79,10 +83,10 @@ def main():
             print("Hugging Face token not found. Please log in.")
             login()
     
-    train_sentencepiece(args.corpus_path, args.model_prefix, args.vocab_size)
+    model_file, vocab_file = train_sentencepiece(args.corpus_path, args.model_prefix, args.vocab_size)
     
     if args.push_to_hub:
-        upload_to_hf_hub(args.model_prefix, args.repo_id, args.private)
+        upload_to_hf_hub(model_file, vocab_file, args.repo_id, args.private)
 
 if __name__ == "__main__":
     main()
