@@ -87,6 +87,10 @@ print("BPE Tokens:", bpe_tokens)
 print("SentencePiece Tokens:", sp_tokens)
 ```
 
+## References
+
+- [What is BPE Tokenization? (YouTube)](https://www.youtube.com/watch?v=BcxJk4WQVIw)
+
 ## Contributing
 
 If you'd like to help out, check out our [contributing guidelines](/CONTRIBUTING.md).
