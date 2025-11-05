@@ -52,7 +52,7 @@ def train_bpe_tokenizer(corpus_path, output_dir, vocab_size):
     print(f"Tokenizer files saved to {output_dir}")
     return output_dir
 
-def upload_to_hf_hub(output_dir, repo_id, private):
+def upload_to_hf_hub(output_dir, repo_id, private, hf_token):
     """
     Uploads the trained tokenizer files to the Hugging Face Hub.
 
@@ -61,7 +61,7 @@ def upload_to_hf_hub(output_dir, repo_id, private):
         repo_id (str): The ID of the repository on the Hugging Face Hub.
         private (bool): Whether to create a private repository.
     """
-    api = HfApi()
+    api = HfApi(token=hf_token)
     
     print(f"Uploading tokenizer files to Hugging Face Hub repository: {repo_id}")
     
@@ -82,48 +82,10 @@ def upload_to_hf_hub(output_dir, repo_id, private):
     
     print(f"Successfully uploaded to https://huggingface.co/{repo_id}")
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Train a Byte-level BPE tokenizer and optionally upload to Hugging Face Hub."
-    )
-    parser.add_argument(
-        "--corpus",
-        type=str,
-        required=True,
-        help="Path to the clean corpus file."
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        required=True,
-        help="Directory to save the trained tokenizer files."
-    )
-    parser.add_argument(
-        "--vocab_size",
-        type=int,
-        default=32000,
-        help="The desired size of the vocabulary."
-    )
-    parser.add_argument("--push_to_hub", action="store_true", help="Upload the trained model to Hugging Face Hub.")
-    parser.add_argument("--repo_id", type=str, help="The ID of the repository on the Hugging Face Hub (e.g., 'username/repo_name').")
-    parser.add_argument("--private", action="store_true", help="Create a private repository on the Hugging Face Hub.")
+def train(corpus_path, output_dir, vocab_size, push_to_hub, repo_id, private, hf_token):
+    output_dir = train_bpe_tokenizer(corpus_path, output_dir, vocab_size)
     
-    args = parser.parse_args()
+    if push_to_hub:
+        upload_to_hf_hub(output_dir, repo_id, private, hf_token)
 
-    # Log in to Hugging Face
-    if args.push_to_hub:
-        if not args.repo_id:
-            raise ValueError("repo_id must be specified when pushing to hub.")
-        
-        token = HfFolder.get_token()
-        if token is None:
-            print("Hugging Face token not found. Please log in.")
-            login()
 
-    output_dir = train_bpe_tokenizer(args.corpus, args.output_dir, args.vocab_size)
-    
-    if args.push_to_hub:
-        upload_to_hf_hub(output_dir, args.repo_id, args.private)
-
-if __name__ == "__main__":
-    main()
