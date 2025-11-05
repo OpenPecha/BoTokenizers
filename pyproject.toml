@@ -20,7 +20,8 @@ classifiers = [
 dependencies = [
     "sentencepiece",
     "tokenizers",
-    "huggingface-hub"
+    "huggingface-hub",
+    "transformers"
 ]
 
 [project.optional-dependencies]
