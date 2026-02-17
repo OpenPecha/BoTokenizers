@@ -1,8 +1,7 @@
 
 import os
-import argparse
 import sentencepiece as spm
-from huggingface_hub import HfApi, login, HfFolder
+from huggingface_hub import HfApi
 from transformers import AlbertTokenizer
 
 def train_sentencepiece(corpus_path, output_dir, vocab_size):
@@ -23,11 +22,12 @@ def train_sentencepiece(corpus_path, output_dir, vocab_size):
     os.makedirs(output_dir, exist_ok=True)
     
     model_prefix = os.path.join(output_dir, "sentencepiece")
-    special_tokens = ["<s>", "<pad>", "</s>", "<unk>"]
+    special_tokens = ["<s>", "<pad>", "</s>"]
     
     spm.SentencePieceTrainer.train(
         f'--input={corpus_path} --model_prefix={model_prefix} '
-        f'--vocab_size={vocab_size} --model_type=bpe '
+        f'--vocab_size={vocab_size} --model_type=unigram '
+        f'--character_coverage=1.0'
         f'--user_defined_symbols={",".join(special_tokens)}'
     )
     
@@ -84,3 +84,14 @@ def train(corpus_path, output_dir, vocab_size, push_to_hub, repo_id, private, hf
     output_dir = train_sentencepiece(corpus_path, output_dir, vocab_size)
     if push_to_hub:
         upload_to_hf_hub(output_dir, repo_id, private, hf_token)
+
+if __name__ == "__main__":
+    corpus_path = "data/bo_corpus.txt"
+    output_dir = "data/bo_sentencepiece"
+    vocab_size = 20000
+    push_to_hub = True
+    repo_id = "openpecha/BoSentencePiece"
+    private = False
+    hf_token = os.getenv("HF_TOKEN")
+    # train(corpus_path, output_dir, vocab_size, push_to_hub, repo_id, private, hf_token)
+    upload_to_hf_hub(output_dir, repo_id, private, hf_token)
