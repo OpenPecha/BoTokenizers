@@ -2,6 +2,8 @@
 
 A Python package for training and using BPE and SentencePiece tokenizers for Tibetan text, with support for uploading to and downloading from the Hugging Face Hub.
 
+Developed as part of [The BDRC E-Text Corpus project](https://www.bdrc.io/blog/2026/02/28/bdrc-launches-major-initiative-to-build-open-buddhist-datasets-for-ai/).
+
 ## Installation
 
 To install the package, clone the repository and install the dependencies:
