@@ -18,6 +18,21 @@ For development, install with the `dev` dependencies:
 pip install -e ".[dev]"
 ```
 
+## Training Data
+
+The training data corpus used for all experiments is hosted in the [GitHub Releases](https://github.com/OpenPecha/BoTokenizers/releases) of this repository. This allows anyone to reproduce existing experiments or conduct new ones with the same data.
+
+To download the corpus:
+
+1. Go to the [Releases page](https://github.com/OpenPecha/BoTokenizers/releases).
+2. Download the corpus file (e.g. `bo_corpus.txt`) from the latest release assets.
+3. Place it in the `data/` directory (or any path you prefer) and pass the path to the training scripts.
+
+```bash
+# Example: download corpus using gh CLI
+gh release download --repo OpenPecha/BoTokenizers --pattern "*.txt" --dir data/
+```
+
 ## Usage
 
 ### Training a BPE Tokenizer
