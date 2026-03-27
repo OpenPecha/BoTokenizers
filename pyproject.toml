@@ -21,7 +21,8 @@ dependencies = [
     "sentencepiece",
     "tokenizers",
     "huggingface-hub",
-    "transformers"
+    "transformers",
+    "botok"
 ]
 
 [project.optional-dependencies]
@@ -30,6 +31,10 @@ dev = [
     "pytest-cov",
     "pre-commit",
 ]
+
+[project.scripts]
+botokenizers-train-tibetan = "BoTokenizers.train_sentence_piece_tibetan:main"
+botokenizers-tokenize = "BoTokenizers.tokenize:main"
 
 
 [project.urls]
